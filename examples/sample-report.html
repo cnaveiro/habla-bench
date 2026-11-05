@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>habla-bench report · core</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #f7f8fa;
+  --surface: #ffffff;
+  --surface-2: #eef1f5;
+  --text: #17202b;
+  --muted: #5b6878;
+  --border: #d8dee7;
+  --accent: #0b6b53;
+  --accent-2: #0b6b53;
+  --pass: #0b6b53;
+  --fail: #a33a2b;
+  --shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c1118;
+    --surface: #121a24;
+    --surface-2: #192331;
+    --text: #e8edf4;
+    --muted: #a3b0c2;
+    --border: #2a3748;
+    --accent: #6fd7b6;
+    --accent-2: #6fd7b6;
+    --pass: #6fd7b6;
+    --fail: #ff9b8a;
+    --shadow: none;
+  }
+}
+html[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f7f8fa; --surface: #ffffff; --surface-2: #eef1f5;
+  --text: #17202b; --muted: #5b6878; --border: #d8dee7;
+  --accent: #0b6b53; --accent-2: #0b6b53;
+  --pass: #0b6b53; --fail: #a33a2b; --shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0c1118; --surface: #121a24; --surface-2: #192331;
+  --text: #e8edf4; --muted: #a3b0c2; --border: #2a3748;
+  --accent: #6fd7b6; --accent-2: #6fd7b6;
+  --pass: #6fd7b6; --fail: #ff9b8a; --shadow: none;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+header {
+  padding: 2.4rem 1.25rem 1.4rem; border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.wrap { max-width: 1180px; margin: 0 auto; }
+.brand { display: flex; align-items: baseline; gap: 0.7rem; flex-wrap: wrap; }
+h1 { font-size: clamp(1.7rem, 4vw, 2.5rem); margin: 0; letter-spacing: -0.03em; }
+.sub { color: var(--muted); margin: 0.4rem 0 0; }
+.meta { display: flex; gap: 0.55rem; flex-wrap: wrap; margin-top: 1rem; }
+.pill {
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 999px; padding: 0.2rem 0.65rem; color: var(--muted);
+  font-size: 0.83rem;
+}
+main { max-width: 1180px; margin: 0 auto; padding: 1.4rem 1.25rem 3rem; }
+section { margin-top: 2rem; }
+h2 { font-size: 1.18rem; margin: 0 0 0.7rem; letter-spacing: -0.01em; }
+p { margin: 0.5rem 0; }
+.notice {
+  margin-top: 1rem; padding: 0.8rem 1rem; border: 1px solid var(--border);
+  border-left: 4px solid var(--accent); background: var(--surface-2);
+  border-radius: 8px;
+}
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+caption { text-align: left; padding: 0.55rem 0.8rem; color: var(--muted); }
+th, td { padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; }
+th { background: var(--surface-2); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+th[data-sort] { cursor: pointer; user-select: none; }
+th[data-sort]:hover { color: var(--text); }
+th[data-sort]::after { content: " ↕"; opacity: 0.55; font-size: 0.8em; }
+th[data-dir="asc"]::after { content: " ↑"; opacity: 1; }
+th[data-dir="desc"]::after { content: " ↓"; opacity: 1; }
+tbody tr:hover { background: var(--surface-2); }
+tbody tr:last-child td { border-bottom: 0; }
+code { font: 0.88em ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.tag { display: inline-block; border-radius: 999px; padding: 1px 8px; font-size: 0.78rem; border: 1px solid currentColor; }
+.tag.pass { color: var(--pass); }
+.tag.fail { color: var(--fail); }
+details { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 0.9rem; margin: 0.55rem 0; }
+summary { cursor: pointer; }
+footer { border-top: 1px solid var(--border); padding: 1.1rem 1.25rem; color: var(--muted); font-size: 0.85rem; }
+.toolbar { margin-left: auto; }
+button {
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.4rem 0.75rem; cursor: pointer; font: inherit;
+}
+button:hover { border-color: var(--accent); }
+ul { margin: 0.4rem 0 0.2rem 1.1rem; padding: 0; }
+@media print {
+  header, main, footer { max-width: none; }
+  .toolbar, button { display: none; }
+  table { font-size: 10px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <h1>habla-bench report</h1>
+      <span class="toolbar"><button id="theme-toggle" type="button" aria-label="Toggle theme">Light / dark</button></span>
+    </div>
+    <p class="sub">Neutral Latin American Spanish · deterministic checks · no model judge</p>
+    <div class="meta">
+      <span class="pill">Suite: core</span>
+      <span class="pill">36 cases</span>
+      <span class="pill">Provider: mock</span>
+      <span class="pill">2026-11-05T17:02:46+00:00</span>
+    </div>
+    <div class="notice" role="note"><strong>Sample output from the mock provider, not real benchmark results.</strong> Latency and token usage are simulated.</div>
+  </div>
+</header>
+<main>
+  <section>
+    <h2>Summary</h2>
+    <p>Scores are 0–100. Category scores are weighted by case weight; the overall score is the weighted mean of every case.</p>
+    <div class="table-wrap"><table class="sortable" data-sortable><thead><tr><th data-sort="text">Model</th><th data-sort="number">Overall</th><th data-sort="number">instruction_following</th><th data-sort="number">neutral_spanish</th><th data-sort="number">language_lock</th><th data-sort="number">customer_service</th><th data-sort="number">Voseo rate</th><th data-sort="number">Spain rate</th><th data-sort="number">Avg latency</th><th data-sort="number">Tokens in</th><th data-sort="number">Tokens out</th><th data-sort="number">Est. cost</th></tr></thead><tbody><tr><td><code>mock-a</code></td><td data-sort-value="93.4"><strong>93.4</strong></td><td data-sort-value="96.3">96.3</td><td data-sort-value="90.7">90.7</td><td data-sort-value="91.7">91.7</td><td data-sort-value="95.4">95.4</td><td data-sort-value="0.0">0.0%</td><td data-sort-value="5.6">5.6%</td><td data-sort-value="1094.6">1,095 ms</td><td data-sort-value="1961">1,961</td><td data-sort-value="839">839</td><td data-sort-value="0.002127">$0.002127</td></tr><tr><td><code>mock-b</code></td><td data-sort-value="75.2"><strong>75.2</strong></td><td data-sort-value="75.9">75.9</td><td data-sort-value="76.5">76.5</td><td data-sort-value="66.7">66.7</td><td data-sort-value="80.5">80.5</td><td data-sort-value="5.6">5.6%</td><td data-sort-value="8.3">8.3%</td><td data-sort-value="662.4">662 ms</td><td data-sort-value="1961">1,961</td><td data-sort-value="2749">2,749</td><td data-sort-value="0.001296">$0.001296</td></tr></tbody></table></div>
+    <p>Example values from prices.yaml, not live provider quotes. Costs use example prices from <code>prices.yaml</code>.</p>
+  </section>
+  <section>
+    <h2>Failing checks</h2>
+    <details><summary><code>mock-a</code> (5 case(s) with failures)</summary><ul><li><code>if-forbidden-02</code>: <code>is_spanish</code> (response does not look like Spanish)</li><li><code>ns-forbidden-vale-01</code>: <code>no_spain_forms</code> (peninsular markers: habéis, podéis, vale, vosotros)</li><li><code>ns-voseo-input-02</code>: <code>no_spain_forms</code> (peninsular markers: habéis, podéis, vale, vosotros)</li><li><code>ll-english-03</code>: <code>is_spanish</code> (response does not look like Spanish)</li><li><code>cs-bike-price-01</code>: <code>is_spanish</code> (response does not look like Spanish)</li></ul></details><details><summary><code>mock-b</code> (19 case(s) with failures)</summary><ul><li><code>if-words-01</code>: <code>max_words</code> (235 words (limit 12))</li><li><code>if-json-02</code>: <code>json_keys</code> (missing keys: ciudad, clima)</li><li><code>if-bullets-02</code>: <code>bullet_count</code> (0 bullet line(s), expected 4); <code>max_words</code> (235 words (limit 40))</li><li><code>ns-forbidden-vale-01</code>: <code>no_voseo</code> (voseo markers: decime, mirá, podés, vos)</li><li><code>ns-plural-01</code>: <code>no_spain_forms</code> (peninsular markers: habéis, podéis, vale, vosotros)</li><li><code>ns-voseo-input-02</code>: <code>no_spain_forms</code> (peninsular markers: habéis, podéis, vale, vosotros)</li><li><code>ns-spain-input-01</code>: <code>no_spain_forms</code> (peninsular markers: habéis, podéis, vale, vosotros)</li><li><code>ns-lexicon-01</code>: <code>max_words</code> (235 words (limit 40))</li><li><code>ns-apology-01</code>: <code>max_words</code> (235 words (limit 35))</li><li><code>ll-mixed-02</code>: <code>is_spanish</code> (response does not look like Spanish)</li><li><code>ll-english-03</code>: <code>is_spanish</code> (response does not look like Spanish)</li><li><code>ll-english-04</code>: <code>no_voseo</code> (voseo markers: decime, mirá, podés, vos)</li><li><code>ll-mixed-04</code>: <code>is_spanish</code> (response does not look like Spanish)</li><li><code>cs-dental-price-01</code>: <code>is_spanish</code> (response does not look like Spanish)</li><li><code>cs-dental-hours-01</code>: <code>no_invented_numbers</code> (numbers not in context: 999.999)</li><li><code>cs-bike-stock-01</code>: <code>no_invented_numbers</code> (numbers not in context: 999.999)</li><li><code>cs-bike-price-01</code>: <code>max_words</code> (235 words (limit 25))</li><li><code>cs-bike-hours-01</code>: <code>no_invented_numbers</code> (numbers not in context: 999.999)</li><li><code>cs-language-enroll-01</code>: <code>max_words</code> (235 words (limit 40))</li></ul></details>
+  </section>
+  <section>
+    <h2>Per-case results</h2>
+    <div class="table-wrap"><table class="sortable" data-sortable><thead><tr><th data-sort="text">Model</th><th data-sort="text">Case</th><th data-sort="text">Category</th><th data-sort="number">Score</th><th data-sort="number">Checks</th><th data-sort="number">Latency</th><th data-sort="number">Est. cost</th><th data-sort="text">Status</th><th data-sort="text">Failed checks</th></tr></thead><tbody><tr><td><code>mock-a</code></td><td><code>if-json-01</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="1">1/1</td><td data-sort-value="1433.9">1,434 ms</td><td data-sort-value="0.000049">$0.000049</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>if-words-01</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="1290.2">1,290 ms</td><td data-sort-value="0.000047">$0.000047</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>if-bullets-01</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="823.8">824 ms</td><td data-sort-value="0.000065">$0.000065</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>if-forbidden-01</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="1394.0">1,394 ms</td><td data-sort-value="0.000044">$0.000044</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>if-yesno-01</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="941.2">941 ms</td><td data-sort-value="0.000022">$0.000022</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>if-json-02</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="1">1/1</td><td data-sort-value="918.2">918 ms</td><td data-sort-value="0.000044">$0.000044</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>if-bullets-02</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="1185.6">1,186 ms</td><td data-sort-value="0.000079">$0.000079</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>if-forbidden-02</code></td><td>instruction_following</td><td data-sort-value="66.67">66.7</td><td data-sort-value="2">2/3</td><td data-sort-value="1152.3">1,152 ms</td><td data-sort-value="0.000054">$0.000054</td><td><span class="tag fail">fail</span></td><td>is_spanish</td></tr><tr><td><code>mock-a</code></td><td><code>if-words-02</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="1310.1">1,310 ms</td><td data-sort-value="0.000030">$0.000030</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ns-explain-01</code></td><td>neutral_spanish</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="1330.2">1,330 ms</td><td data-sort-value="0.000060">$0.000060</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ns-voseo-input-01</code></td><td>neutral_spanish</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="909.0">909 ms</td><td data-sort-value="0.000061">$0.000061</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ns-tone-01</code></td><td>neutral_spanish</td><td data-sort-value="100.00">100.0</td><td data-sort-value="4">4/4</td><td data-sort-value="709.1">709 ms</td><td data-sort-value="0.000055">$0.000055</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ns-forbidden-vale-01</code></td><td>neutral_spanish</td><td data-sort-value="66.67">66.7</td><td data-sort-value="2">2/3</td><td data-sort-value="782.5">782 ms</td><td data-sort-value="0.000049">$0.000049</td><td><span class="tag fail">fail</span></td><td>no_spain_forms</td></tr><tr><td><code>mock-a</code></td><td><code>ns-plural-01</code></td><td>neutral_spanish</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="1434.9">1,435 ms</td><td data-sort-value="0.000058">$0.000058</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ns-voseo-input-02</code></td><td>neutral_spanish</td><td data-sort-value="50.00">50.0</td><td data-sort-value="1">1/2</td><td data-sort-value="1389.8">1,390 ms</td><td data-sort-value="0.000046">$0.000046</td><td><span class="tag fail">fail</span></td><td>no_spain_forms</td></tr><tr><td><code>mock-a</code></td><td><code>ns-spain-input-01</code></td><td>neutral_spanish</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="1085.7">1,086 ms</td><td data-sort-value="0.000061">$0.000061</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ns-lexicon-01</code></td><td>neutral_spanish</td><td data-sort-value="100.00">100.0</td><td data-sort-value="4">4/4</td><td data-sort-value="1271.3">1,271 ms</td><td data-sort-value="0.000058">$0.000058</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ns-apology-01</code></td><td>neutral_spanish</td><td data-sort-value="100.00">100.0</td><td data-sort-value="4">4/4</td><td data-sort-value="1423.5">1,424 ms</td><td data-sort-value="0.000058">$0.000058</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ll-english-01</code></td><td>language_lock</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="921.2">921 ms</td><td data-sort-value="0.000068">$0.000068</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ll-mixed-01</code></td><td>language_lock</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="773.0">773 ms</td><td data-sort-value="0.000074">$0.000074</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ll-english-02</code></td><td>language_lock</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="793.0">793 ms</td><td data-sort-value="0.000068">$0.000068</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ll-mixed-02</code></td><td>language_lock</td><td data-sort-value="100.00">100.0</td><td data-sort-value="1">1/1</td><td data-sort-value="1166.0">1,166 ms</td><td data-sort-value="0.000065">$0.000065</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ll-english-03</code></td><td>language_lock</td><td data-sort-value="0.00">0.0</td><td data-sort-value="0">0/1</td><td data-sort-value="1176.5">1,176 ms</td><td data-sort-value="0.000055">$0.000055</td><td><span class="tag fail">fail</span></td><td>is_spanish</td></tr><tr><td><code>mock-a</code></td><td><code>ll-mixed-03</code></td><td>language_lock</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="1166.2">1,166 ms</td><td data-sort-value="0.000066">$0.000066</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ll-english-04</code></td><td>language_lock</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="1360.9">1,361 ms</td><td data-sort-value="0.000069">$0.000069</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>ll-mixed-04</code></td><td>language_lock</td><td data-sort-value="100.00">100.0</td><td data-sort-value="1">1/1</td><td data-sort-value="986.7">987 ms</td><td data-sort-value="0.000067">$0.000067</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>cs-dental-price-01</code></td><td>customer_service</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="1338.4">1,338 ms</td><td data-sort-value="0.000085">$0.000085</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>cs-dental-hours-01</code></td><td>customer_service</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="1185.0">1,185 ms</td><td data-sort-value="0.000065">$0.000065</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>cs-bike-stock-01</code></td><td>customer_service</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="847.2">847 ms</td><td data-sort-value="0.000064">$0.000064</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>cs-bike-price-01</code></td><td>customer_service</td><td data-sort-value="66.67">66.7</td><td data-sort-value="2">2/3</td><td data-sort-value="859.4">859 ms</td><td data-sort-value="0.000057">$0.000057</td><td><span class="tag fail">fail</span></td><td>is_spanish</td></tr><tr><td><code>mock-a</code></td><td><code>cs-bike-hours-01</code></td><td>customer_service</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="1162.5">1,162 ms</td><td data-sort-value="0.000063">$0.000063</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>cs-language-course-01</code></td><td>customer_service</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="788.9">789 ms</td><td data-sort-value="0.000065">$0.000065</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>cs-language-enroll-01</code></td><td>customer_service</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="1126.1">1,126 ms</td><td data-sort-value="0.000066">$0.000066</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>cs-dental-complaint-01</code></td><td>customer_service</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="782.9">783 ms</td><td data-sort-value="0.000061">$0.000061</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>cs-bike-warranty-01</code></td><td>customer_service</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="1255.5">1,256 ms</td><td data-sort-value="0.000063">$0.000063</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-a</code></td><td><code>cs-language-refund-01</code></td><td>customer_service</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="932.0">932 ms</td><td data-sort-value="0.000066">$0.000066</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>if-json-01</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="1">1/1</td><td data-sort-value="814.7">815 ms</td><td data-sort-value="0.000012">$0.000012</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>if-words-01</code></td><td>instruction_following</td><td data-sort-value="50.00">50.0</td><td data-sort-value="1">1/2</td><td data-sort-value="589.9">590 ms</td><td data-sort-value="0.000149">$0.000149</td><td><span class="tag fail">fail</span></td><td>max_words</td></tr><tr><td><code>mock-b</code></td><td><code>if-bullets-01</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="630.7">631 ms</td><td data-sort-value="0.000016">$0.000016</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>if-forbidden-01</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="692.7">693 ms</td><td data-sort-value="0.000011">$0.000011</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>if-yesno-01</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="464.6">465 ms</td><td data-sort-value="0.000005">$0.000005</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>if-json-02</code></td><td>instruction_following</td><td data-sort-value="0.00">0.0</td><td data-sort-value="0">0/1</td><td data-sort-value="361.2">361 ms</td><td data-sort-value="0.000009">$0.000009</td><td><span class="tag fail">fail</span></td><td>json_keys</td></tr><tr><td><code>mock-b</code></td><td><code>if-bullets-02</code></td><td>instruction_following</td><td data-sort-value="33.33">33.3</td><td data-sort-value="1">1/3</td><td data-sort-value="893.1">893 ms</td><td data-sort-value="0.000148">$0.000148</td><td><span class="tag fail">fail</span></td><td>bullet_count, max_words</td></tr><tr><td><code>mock-b</code></td><td><code>if-forbidden-02</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="863.5">864 ms</td><td data-sort-value="0.000012">$0.000012</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>if-words-02</code></td><td>instruction_following</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="383.6">384 ms</td><td data-sort-value="0.000007">$0.000007</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>ns-explain-01</code></td><td>neutral_spanish</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="822.0">822 ms</td><td data-sort-value="0.000015">$0.000015</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>ns-voseo-input-01</code></td><td>neutral_spanish</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="511.7">512 ms</td><td data-sort-value="0.000015">$0.000015</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>ns-tone-01</code></td><td>neutral_spanish</td><td data-sort-value="100.00">100.0</td><td data-sort-value="4">4/4</td><td data-sort-value="685.9">686 ms</td><td data-sort-value="0.000014">$0.000014</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>ns-forbidden-vale-01</code></td><td>neutral_spanish</td><td data-sort-value="66.67">66.7</td><td data-sort-value="2">2/3</td><td data-sort-value="751.5">752 ms</td><td data-sort-value="0.000011">$0.000011</td><td><span class="tag fail">fail</span></td><td>no_voseo</td></tr><tr><td><code>mock-b</code></td><td><code>ns-plural-01</code></td><td>neutral_spanish</td><td data-sort-value="50.00">50.0</td><td data-sort-value="1">1/2</td><td data-sort-value="733.0">733 ms</td><td data-sort-value="0.000012">$0.000012</td><td><span class="tag fail">fail</span></td><td>no_spain_forms</td></tr><tr><td><code>mock-b</code></td><td><code>ns-voseo-input-02</code></td><td>neutral_spanish</td><td data-sort-value="50.00">50.0</td><td data-sort-value="1">1/2</td><td data-sort-value="731.5">732 ms</td><td data-sort-value="0.000012">$0.000012</td><td><span class="tag fail">fail</span></td><td>no_spain_forms</td></tr><tr><td><code>mock-b</code></td><td><code>ns-spain-input-01</code></td><td>neutral_spanish</td><td data-sort-value="66.67">66.7</td><td data-sort-value="2">2/3</td><td data-sort-value="473.9">474 ms</td><td data-sort-value="0.000013">$0.000013</td><td><span class="tag fail">fail</span></td><td>no_spain_forms</td></tr><tr><td><code>mock-b</code></td><td><code>ns-lexicon-01</code></td><td>neutral_spanish</td><td data-sort-value="75.00">75.0</td><td data-sort-value="3">3/4</td><td data-sort-value="849.9">850 ms</td><td data-sort-value="0.000148">$0.000148</td><td><span class="tag fail">fail</span></td><td>max_words</td></tr><tr><td><code>mock-b</code></td><td><code>ns-apology-01</code></td><td>neutral_spanish</td><td data-sort-value="75.00">75.0</td><td data-sort-value="3">3/4</td><td data-sort-value="884.3">884 ms</td><td data-sort-value="0.000148">$0.000148</td><td><span class="tag fail">fail</span></td><td>max_words</td></tr><tr><td><code>mock-b</code></td><td><code>ll-english-01</code></td><td>language_lock</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="647.3">647 ms</td><td data-sort-value="0.000017">$0.000017</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>ll-mixed-01</code></td><td>language_lock</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="353.7">354 ms</td><td data-sort-value="0.000019">$0.000019</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>ll-english-02</code></td><td>language_lock</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="445.9">446 ms</td><td data-sort-value="0.000017">$0.000017</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>ll-mixed-02</code></td><td>language_lock</td><td data-sort-value="0.00">0.0</td><td data-sort-value="0">0/1</td><td data-sort-value="425.1">425 ms</td><td data-sort-value="0.000011">$0.000011</td><td><span class="tag fail">fail</span></td><td>is_spanish</td></tr><tr><td><code>mock-b</code></td><td><code>ll-english-03</code></td><td>language_lock</td><td data-sort-value="0.00">0.0</td><td data-sort-value="0">0/1</td><td data-sort-value="769.1">769 ms</td><td data-sort-value="0.000014">$0.000014</td><td><span class="tag fail">fail</span></td><td>is_spanish</td></tr><tr><td><code>mock-b</code></td><td><code>ll-mixed-03</code></td><td>language_lock</td><td data-sort-value="100.00">100.0</td><td data-sort-value="2">2/2</td><td data-sort-value="995.5">996 ms</td><td data-sort-value="0.000017">$0.000017</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>ll-english-04</code></td><td>language_lock</td><td data-sort-value="50.00">50.0</td><td data-sort-value="1">1/2</td><td data-sort-value="556.6">557 ms</td><td data-sort-value="0.000011">$0.000011</td><td><span class="tag fail">fail</span></td><td>no_voseo</td></tr><tr><td><code>mock-b</code></td><td><code>ll-mixed-04</code></td><td>language_lock</td><td data-sort-value="0.00">0.0</td><td data-sort-value="0">0/1</td><td data-sort-value="872.2">872 ms</td><td data-sort-value="0.000012">$0.000012</td><td><span class="tag fail">fail</span></td><td>is_spanish</td></tr><tr><td><code>mock-b</code></td><td><code>cs-dental-price-01</code></td><td>customer_service</td><td data-sort-value="66.67">66.7</td><td data-sort-value="2">2/3</td><td data-sort-value="739.9">740 ms</td><td data-sort-value="0.000015">$0.000015</td><td><span class="tag fail">fail</span></td><td>is_spanish</td></tr><tr><td><code>mock-b</code></td><td><code>cs-dental-hours-01</code></td><td>customer_service</td><td data-sort-value="66.67">66.7</td><td data-sort-value="2">2/3</td><td data-sort-value="768.3">768 ms</td><td data-sort-value="0.000014">$0.000014</td><td><span class="tag fail">fail</span></td><td>no_invented_numbers</td></tr><tr><td><code>mock-b</code></td><td><code>cs-bike-stock-01</code></td><td>customer_service</td><td data-sort-value="66.67">66.7</td><td data-sort-value="2">2/3</td><td data-sort-value="819.9">820 ms</td><td data-sort-value="0.000014">$0.000014</td><td><span class="tag fail">fail</span></td><td>no_invented_numbers</td></tr><tr><td><code>mock-b</code></td><td><code>cs-bike-price-01</code></td><td>customer_service</td><td data-sort-value="66.67">66.7</td><td data-sort-value="2">2/3</td><td data-sort-value="674.0">674 ms</td><td data-sort-value="0.000150">$0.000150</td><td><span class="tag fail">fail</span></td><td>max_words</td></tr><tr><td><code>mock-b</code></td><td><code>cs-bike-hours-01</code></td><td>customer_service</td><td data-sort-value="66.67">66.7</td><td data-sort-value="2">2/3</td><td data-sort-value="370.1">370 ms</td><td data-sort-value="0.000014">$0.000014</td><td><span class="tag fail">fail</span></td><td>no_invented_numbers</td></tr><tr><td><code>mock-b</code></td><td><code>cs-language-course-01</code></td><td>customer_service</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="801.5">802 ms</td><td data-sort-value="0.000016">$0.000016</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>cs-language-enroll-01</code></td><td>customer_service</td><td data-sort-value="66.67">66.7</td><td data-sort-value="2">2/3</td><td data-sort-value="680.2">680 ms</td><td data-sort-value="0.000149">$0.000149</td><td><span class="tag fail">fail</span></td><td>max_words</td></tr><tr><td><code>mock-b</code></td><td><code>cs-dental-complaint-01</code></td><td>customer_service</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="876.7">877 ms</td><td data-sort-value="0.000015">$0.000015</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>cs-bike-warranty-01</code></td><td>customer_service</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="380.8">381 ms</td><td data-sort-value="0.000016">$0.000016</td><td><span class="tag pass">pass</span></td><td>—</td></tr><tr><td><code>mock-b</code></td><td><code>cs-language-refund-01</code></td><td>customer_service</td><td data-sort-value="100.00">100.0</td><td data-sort-value="3">3/3</td><td data-sort-value="530.3">530 ms</td><td data-sort-value="0.000017">$0.000017</td><td><span class="tag pass">pass</span></td><td>—</td></tr></tbody></table></div>
+  </section>
+  <section>
+    <h2>Method</h2>
+    <p>Every response is scored by deterministic checks only: JSON shape, word limits, bullet counts, forbidden words, voseo markers, peninsular Spanish markers, a Spanish-language heuristic, and numbers that do not appear in the provided context. No model is used as a judge.</p>
+    <h2>Limitations</h2>
+    <ul>
+      <li>The language check is a word-frequency heuristic, not a full language detector.</li>
+      <li><code>no_invented_numbers</code> covers digits only; spelled-out numbers are outside its scope.</li>
+      <li>Template-style checks reward format compliance, not truthfulness or usefulness.</li>
+      <li>Cost is an estimate based on provider token usage and the example prices in <code>prices.yaml</code>.</li>
+    </ul>
+  </section>
+</main>
+<footer>
+  <div class="wrap">Generated by habla-bench · self-contained file · no external assets</div>
+</footer>
+<script>
+(function () {
+  var root = document.documentElement;
+  var saved = null;
+  try { saved = localStorage.getItem("habla-bench-theme"); } catch (err) {}
+  if (saved === "light" || saved === "dark") { root.setAttribute("data-theme", saved); }
+  var toggle = document.getElementById("theme-toggle");
+  if (toggle) {
+    toggle.addEventListener("click", function () {
+      var current = root.getAttribute("data-theme");
+      if (!current) {
+        current = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      var next = current === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("habla-bench-theme", next); } catch (err) {}
+    });
+  }
+  function valueOf(cell) {
+    if (cell.hasAttribute("data-sort-value")) { return cell.getAttribute("data-sort-value"); }
+    return cell.textContent.trim();
+  }
+  function sortTable(table, index, header) {
+    var tbody = table.tBodies[0];
+    if (!tbody) { return; }
+    var rows = Array.prototype.slice.call(tbody.rows);
+    var numeric = header.getAttribute("data-sort") === "number";
+    var direction = header.getAttribute("data-dir") === "asc" ? "desc" : "asc";
+    Array.prototype.forEach.call(table.tHead.rows[0].cells, function (cell) {
+      cell.removeAttribute("data-dir");
+      cell.removeAttribute("aria-sort");
+    });
+    header.setAttribute("data-dir", direction);
+    header.setAttribute("aria-sort", direction === "asc" ? "ascending" : "descending");
+    rows.sort(function (a, b) {
+      var av = valueOf(a.cells[index]);
+      var bv = valueOf(b.cells[index]);
+      var result;
+      if (numeric) {
+        result = (parseFloat(av) || 0) - (parseFloat(bv) || 0);
+      } else {
+        result = av.toLocaleLowerCase("es").localeCompare(bv.toLocaleLowerCase("es"));
+      }
+      return direction === "asc" ? result : -result;
+    });
+    rows.forEach(function (row) { tbody.appendChild(row); });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("table[data-sortable]"), function (table) {
+    if (!table.tHead || !table.tHead.rows.length) { return; }
+    Array.prototype.forEach.call(table.tHead.rows[0].cells, function (header, index) {
+      if (!header.hasAttribute("data-sort")) { return; }
+      header.tabIndex = 0;
+      header.setAttribute("role", "button");
+      header.addEventListener("click", function () { sortTable(table, index, header); });
+      header.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          sortTable(table, index, header);
+        }
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

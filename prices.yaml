@@ -1,0 +1,20 @@
+# Price table for habla-bench.
+#
+# Every value below is an EXAMPLE, not a live quote. Replace the numbers with
+# the current prices published by your provider. Prices are in USD per one
+# million tokens. The "note" field is shown in reports.
+currency: USD
+unit: per_million_tokens
+models:
+  mock-a:
+    input: 0.40
+    output: 1.60
+    note: example
+  mock-b:
+    input: 0.10
+    output: 0.40
+    note: example
+default:
+  input: 0.30
+  output: 1.20
+  note: example

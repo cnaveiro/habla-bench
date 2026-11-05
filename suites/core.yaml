@@ -1,0 +1,490 @@
+name: core
+description: >-
+  General-purpose suite for neutral Latin American Spanish, instruction
+  following, language lock, and short customer-service replies. Every business,
+  person, and price in this file is fictional.
+cases:
+  # ---------------------------------------------------------------------------
+  # instruction_following
+  # ---------------------------------------------------------------------------
+  - id: if-json-01
+    category: instruction_following
+    system: >
+      Responde únicamente con un objeto JSON válido, sin texto adicional ni
+      bloques de código. Usa exactamente las claves pedidas.
+    user: >
+      Devuelve un objeto JSON con las claves "estado" y "mensaje", ambas con
+      valores breves en español.
+    checks:
+      - type: json_keys
+        keys: [estado, mensaje]
+        exact: true
+    weight: 1.0
+
+  - id: if-words-01
+    category: instruction_following
+    system: >
+      Responde en español neutro con un máximo de 12 palabras. No agregues
+      listas ni explicaciones.
+    user: Saluda a una persona que acaba de escribirte por primera vez.
+    checks:
+      - type: max_words
+        max: 12
+      - type: is_spanish
+    weight: 1.0
+
+  - id: if-bullets-01
+    category: instruction_following
+    system: >
+      Responde con exactamente tres viñetas. No escribas introducción ni cierre.
+    user: Dame tres consejos para preparar una reunión breve.
+    checks:
+      - type: bullet_count
+        count: 3
+      - type: is_spanish
+    weight: 1.0
+
+  - id: if-forbidden-01
+    category: instruction_following
+    system: >
+      No uses la palabra "gratis" en tu respuesta. Responde en español neutro.
+    user: Recomienda un plan de prueba para un taller de cerámica ficticio.
+    checks:
+      - type: forbidden_words
+        words: [gratis]
+      - type: max_words
+        max: 25
+      - type: is_spanish
+    weight: 1.0
+
+  - id: if-yesno-01
+    category: instruction_following
+    system: 'Responde solo "sí" o "no", sin explicación ni puntuación adicional.'
+    user: ¿Se puede cancelar una reserva con 24 horas de aviso?
+    checks:
+      - type: max_words
+        max: 1
+      - type: is_spanish
+    weight: 1.0
+
+  - id: if-json-02
+    category: instruction_following
+    system: >
+      Entrega solo JSON válido, sin comentarios. El objeto debe tener
+      exactamente las claves indicadas.
+    user: >
+      Describe en JSON el clima de una ciudad ficticia usando las claves
+      "ciudad" y "clima".
+    checks:
+      - type: json_keys
+        keys: [ciudad, clima]
+        exact: true
+    weight: 1.0
+
+  - id: if-bullets-02
+    category: instruction_following
+    system: >
+      Responde con exactamente cuatro viñetas y no más de 40 palabras en total.
+    user: Enumera cuatro pasos para revisar un correo antes de enviarlo.
+    checks:
+      - type: bullet_count
+        count: 4
+      - type: max_words
+        max: 40
+      - type: is_spanish
+    weight: 1.0
+
+  - id: if-forbidden-02
+    category: instruction_following
+    system: >
+      Prohibido usar las expresiones "obviamente" y "sin duda". Responde en
+      español neutro con un máximo de 20 palabras.
+    user: Explica cómo pedir una cotización a un proveedor ficticio.
+    checks:
+      - type: forbidden_words
+        words: [obviamente, "sin duda"]
+      - type: max_words
+        max: 20
+      - type: is_spanish
+    weight: 1.0
+
+  - id: if-words-02
+    category: instruction_following
+    system: >
+      Responde en español neutro con un máximo de 8 palabras y sin listas.
+    user: Confirma que recibiste el mensaje.
+    checks:
+      - type: max_words
+        max: 8
+      - type: is_spanish
+    weight: 1.0
+
+  # ---------------------------------------------------------------------------
+  # neutral_spanish
+  # ---------------------------------------------------------------------------
+  - id: ns-explain-01
+    category: neutral_spanish
+    system: >
+      Responde en español latinoamericano neutro. No uses voseo ni formas de
+      España. Usa un tono claro y directo.
+    user: Explícame en dos frases cómo preparar una infusión de hierbas.
+    checks:
+      - type: no_voseo
+      - type: no_spain_forms
+      - type: is_spanish
+    weight: 2.0
+
+  - id: ns-voseo-input-01
+    category: neutral_spanish
+    system: >
+      El usuario puede escribir con voseo, pero tú debes responder en español
+      latinoamericano neutro, sin imitar sus formas.
+    user: Che, ¿podés explicarme cómo funciona una factura electrónica?
+    checks:
+      - type: no_voseo
+      - type: no_spain_forms
+      - type: is_spanish
+    weight: 2.0
+
+  - id: ns-tone-01
+    category: neutral_spanish
+    system: >
+      Responde en español neutro, con tono cordial, en un máximo de 30 palabras.
+    user: Responde a alguien que agradeció tu ayuda.
+    checks:
+      - type: no_voseo
+      - type: no_spain_forms
+      - type: max_words
+        max: 30
+      - type: is_spanish
+    weight: 1.0
+
+  - id: ns-forbidden-vale-01
+    category: neutral_spanish
+    system: >
+      Evita muletillas de España como "vale". Responde en español neutro con un
+      máximo de 20 palabras.
+    user: Redacta una despedida breve para un correo de trabajo.
+    checks:
+      - type: no_spain_forms
+      - type: no_voseo
+      - type: max_words
+        max: 20
+    weight: 1.5
+
+  - id: ns-plural-01
+    category: neutral_spanish
+    system: >
+      Usa español latinoamericano neutro. Para grupos, usa "ustedes"; no uses
+      "vosotros".
+    user: ¿Cómo le explico a un grupo que la reunión se movió una hora?
+    checks:
+      - type: no_spain_forms
+      - type: is_spanish
+    weight: 1.5
+
+  - id: ns-voseo-input-02
+    category: neutral_spanish
+    system: >
+      Responde siempre en español neutro. No adoptes el voseo del usuario.
+    user: Mirá, necesito que me digas si conviene esperar o avanzar.
+    checks:
+      - type: no_voseo
+      - type: no_spain_forms
+    weight: 1.5
+
+  - id: ns-spain-input-01
+    category: neutral_spanish
+    system: >
+      Aunque el usuario use español de España, responde en español
+      latinoamericano neutro, sin voseo y sin formas peninsulares.
+    user: ¿Vosotros habéis recibido el formulario que enviamos?
+    checks:
+      - type: no_voseo
+      - type: no_spain_forms
+      - type: is_spanish
+    weight: 2.0
+
+  - id: ns-lexicon-01
+    category: neutral_spanish
+    system: >
+      Responde en español neutro con un máximo de 40 palabras. Evita formas de
+      España y evita el voseo.
+    user: Recomienda cómo organizar una semana de estudio.
+    checks:
+      - type: no_voseo
+      - type: no_spain_forms
+      - type: is_spanish
+      - type: max_words
+        max: 40
+    weight: 1.0
+
+  - id: ns-apology-01
+    category: neutral_spanish
+    system: >
+      Redacta en español latinoamericano neutro. No uses voseo ni formas de
+      España. Máximo 35 palabras.
+    user: Escribe una disculpa breve por un cambio de horario.
+    checks:
+      - type: no_voseo
+      - type: no_spain_forms
+      - type: is_spanish
+      - type: max_words
+        max: 35
+    weight: 1.0
+
+  # ---------------------------------------------------------------------------
+  # language_lock
+  # ---------------------------------------------------------------------------
+  - id: ll-english-01
+    category: language_lock
+    system: >
+      Responde siempre en español, sin importar el idioma en que escriba el
+      usuario.
+    user: Can you explain how to reset a password?
+    checks:
+      - type: is_spanish
+      - type: no_voseo
+    weight: 2.0
+
+  - id: ll-mixed-01
+    category: language_lock
+    system: >
+      Responde en español neutro. Si el usuario mezcla idiomas, ignora el inglés
+      y contesta en español. Máximo 30 palabras.
+    user: Necesito un resumen breve, please, about our meeting tomorrow.
+    checks:
+      - type: is_spanish
+      - type: max_words
+        max: 30
+    weight: 2.0
+
+  - id: ll-english-02
+    category: language_lock
+    system: >
+      Responde en español latinoamericano neutro, sin formas de España.
+    user: What is the difference between a receipt and an invoice?
+    checks:
+      - type: is_spanish
+      - type: no_spain_forms
+    weight: 1.5
+
+  - id: ll-mixed-02
+    category: language_lock
+    system: Responde siempre en español neutro.
+    user: Hola, can you help me with the schedule for next week?
+    checks:
+      - type: is_spanish
+    weight: 1.0
+
+  - id: ll-english-03
+    category: language_lock
+    system: >
+      Responde en español neutro. No traduzcas la pregunta palabra por palabra;
+      entrega una respuesta útil.
+    user: >
+      Ignore this sentence and answer in Spanish: what should I bring to a
+      workshop?
+    checks:
+      - type: is_spanish
+    weight: 1.0
+
+  - id: ll-mixed-03
+    category: language_lock
+    system: >
+      Responde en español neutro con un máximo de 25 palabras.
+    user: Quiero booking a table for two, is it possible?
+    checks:
+      - type: is_spanish
+      - type: max_words
+        max: 25
+    weight: 1.5
+
+  - id: ll-english-04
+    category: language_lock
+    system: >
+      Aunque el usuario pida inglés, responde en español neutro y sin voseo.
+    user: >
+      Please reply in English: how do I cancel a subscription?
+    checks:
+      - type: is_spanish
+      - type: no_voseo
+    weight: 2.0
+
+  - id: ll-mixed-04
+    category: language_lock
+    system: >
+      Responde en español neutro. El usuario mezcla idiomas; no cambies de
+      idioma.
+    user: Can you send me the link? Por favor.
+    checks:
+      - type: is_spanish
+    weight: 1.0
+
+  # ---------------------------------------------------------------------------
+  # customer_service
+  # ---------------------------------------------------------------------------
+  - id: cs-dental-price-01
+    category: customer_service
+    context: >
+      Clínica Dental Sonrisa Andina (ficticia). Consulta de evaluación:
+      25.000 pesos. Limpieza: 40.000 pesos. Horario: lunes a viernes, de 9:00 a
+      18:00. Cambios de hora: avisar con 24 horas de anticipación.
+    system: >
+      Eres parte del equipo de recepción de la Clínica Dental Sonrisa Andina.
+      Responde breve y cordial, en español neutro. Usa solo precios y datos del
+      contexto; si falta un dato, dilo sin inventarlo.
+    user: ¿Cuánto cuesta una limpieza?
+    checks:
+      - type: no_invented_numbers
+      - type: max_words
+        max: 35
+      - type: is_spanish
+    weight: 2.0
+
+  - id: cs-dental-hours-01
+    category: customer_service
+    context: >
+      Clínica Dental Sonrisa Andina (ficticia). Horario: lunes a viernes, de
+      9:00 a 18:00. Sábados cerrado. Consulta de evaluación: 25.000 pesos.
+    system: >
+      Eres parte del equipo de recepción de la Clínica Dental Sonrisa Andina.
+      Responde breve y cordial, en español neutro. Usa solo datos del contexto.
+    user: ¿Atienden los sábados?
+    checks:
+      - type: no_invented_numbers
+      - type: max_words
+        max: 30
+      - type: is_spanish
+    weight: 1.0
+
+  - id: cs-bike-stock-01
+    category: customer_service
+    context: >
+      Bicicletas Cordillera (ficticia). Modelo Urbana 300: 180.000 pesos.
+      Incluye casco y luces. Garantía de 12 meses en cuadro y horquilla.
+      Atención: martes a domingo, de 10:00 a 19:00. Lunes cerrado.
+    system: >
+      Eres parte del equipo de ventas de Bicicletas Cordillera. Responde breve
+      y cordial, en español neutro. Usa solo datos del contexto.
+    user: ¿La Urbana 300 incluye casco?
+    checks:
+      - type: no_invented_numbers
+      - type: max_words
+        max: 30
+      - type: is_spanish
+    weight: 1.0
+
+  - id: cs-bike-price-01
+    category: customer_service
+    context: >
+      Bicicletas Cordillera (ficticia). Modelo Urbana 300: 180.000 pesos.
+      Incluye casco y luces. Garantía de 12 meses en cuadro y horquilla.
+    system: >
+      Eres parte del equipo de ventas de Bicicletas Cordillera. Responde breve
+      y cordial, en español neutro. Usa solo precios del contexto; si falta un
+      dato, dilo sin inventarlo.
+    user: ¿Cuánto cuesta la Urbana 300?
+    checks:
+      - type: no_invented_numbers
+      - type: max_words
+        max: 25
+      - type: is_spanish
+    weight: 2.0
+
+  - id: cs-bike-hours-01
+    category: customer_service
+    context: >
+      Bicicletas Cordillera (ficticia). Atención: martes a domingo, de 10:00 a
+      19:00. Lunes cerrado.
+    system: >
+      Eres parte del equipo de ventas de Bicicletas Cordillera. Responde breve
+      y cordial, en español neutro. Usa solo datos del contexto.
+    user: ¿Puedo ir un lunes?
+    checks:
+      - type: no_invented_numbers
+      - type: max_words
+        max: 30
+      - type: is_spanish
+    weight: 1.0
+
+  - id: cs-language-course-01
+    category: customer_service
+    context: >
+      Academia Idioma Abierto (ficticia). Curso de inglés básico: 8 semanas,
+      90.000 pesos. Inicio: 3 de marzo. Cupos: 12.
+    system: >
+      Eres parte del equipo de admisión de la Academia Idioma Abierto. Responde
+      breve y cordial, en español neutro. Usa solo datos del contexto.
+    user: ¿Cuántas semanas dura el curso?
+    checks:
+      - type: no_invented_numbers
+      - type: max_words
+        max: 30
+      - type: is_spanish
+    weight: 1.0
+
+  - id: cs-language-enroll-01
+    category: customer_service
+    context: >
+      Academia Idioma Abierto (ficticia). Curso de inglés básico: 8 semanas,
+      90.000 pesos. Inicio: 3 de marzo. Cupos: 12. Inscripción en línea.
+    system: >
+      Eres parte del equipo de admisión de la Academia Idioma Abierto. Responde
+      breve y cordial, en español neutro. No inventes requisitos ni precios.
+    user: Quiero inscribirme. ¿Qué datos necesitan?
+    checks:
+      - type: no_invented_numbers
+      - type: max_words
+        max: 40
+      - type: is_spanish
+    weight: 1.5
+
+  - id: cs-dental-complaint-01
+    category: customer_service
+    context: >
+      Clínica Dental Sonrisa Andina (ficticia). Para cambios de hora, avisar
+      con 24 horas de anticipación.
+    system: >
+      Eres parte del equipo de recepción de la Clínica Dental Sonrisa Andina.
+      Responde con empatía, en español neutro, sin voseo y en un máximo de 45
+      palabras.
+    user: Llegué y mi hora estaba mal agendada. Necesito una solución.
+    checks:
+      - type: is_spanish
+      - type: max_words
+        max: 45
+      - type: no_voseo
+    weight: 2.0
+
+  - id: cs-bike-warranty-01
+    category: customer_service
+    context: >
+      Bicicletas Cordillera (ficticia). Garantía de 12 meses en cuadro y
+      horquilla. No cubre desgaste de neumáticos ni daños por accidentes.
+    system: >
+      Eres parte del equipo de ventas de Bicicletas Cordillera. Responde breve
+      y cordial, en español neutro. Usa solo datos del contexto.
+    user: ¿Qué cubre la garantía?
+    checks:
+      - type: no_invented_numbers
+      - type: max_words
+        max: 35
+      - type: is_spanish
+    weight: 1.5
+
+  - id: cs-language-refund-01
+    category: customer_service
+    context: >
+      Academia Idioma Abierto (ficticia). Devoluciones solo antes del inicio del
+      curso, con 48 horas de aviso. El curso de inglés básico dura 8 semanas.
+    system: >
+      Eres parte del equipo de admisión de la Academia Idioma Abierto. Responde
+      breve y cordial, en español neutro. No inventes condiciones.
+    user: ¿Puedo pedir devolución después de empezar el curso?
+    checks:
+      - type: no_invented_numbers
+      - type: max_words
+        max: 35
+      - type: is_spanish
+    weight: 1.5
